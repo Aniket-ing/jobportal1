@@ -51,7 +51,7 @@ function CompanySetup() {
         setLoading(true);
         
         const res = await axios.put(
-            `${COMPANY_API_END_POINT}/update/${params}`, // Ensure `params` is defined
+            `${COMPANY_API_END_POINT}/update/${params.id}`, // Ensure `params` is defined
             formData,
             {
                 headers: {
