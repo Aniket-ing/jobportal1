@@ -20,7 +20,7 @@ app.use(urlencoded({extended:true}));
 app.use(cookieParser());
 
 const corOption ={
-      origin:"http://localhost:5173",
+      origin:"https://jobportal1-phrp.onrender.com",
       credentials:true
 }
 app.use(cors(corOption));
