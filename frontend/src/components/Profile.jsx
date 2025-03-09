@@ -8,12 +8,16 @@ import { Badge } from './ui/badge'
 import { Label } from './ui/label'
 import AppiledJobTable from './AppiledJobTable'
 import UpdateProfileDialog from './UpdateProfileDialog'
+import { useSelector } from 'react-redux'
+import useGetAppliedJob from '@/hooks/useGetAppliedJob'
 
-const skills =["HTML","css","Javascript","Reactjs"]
+//const skills =["HTML","css","Javascript","Reactjs"]
 const isResume=true;
 function Profile() {
+      useGetAppliedJob();
   const [open,setOpen] =useState(false);
-  
+  const {user} =useSelector(store=>store.auth);
+
   return (
     <div>
         <Navbar/>
@@ -21,11 +25,11 @@ function Profile() {
               <div className='flex justify-between'>
                     <div className=' flex items-center gap-4'>
                           <Avatar className="h-24 w-24">
-                                <AvatarImage src='https://github.com/shadcn.png' alt='profile'/>
+                                <AvatarImage src={user?.profile?.profilePhoto} alt='profile'/>
                           </Avatar> 
                           <div>
-                                <h1 className='font-medium text-xl'>Full Name</h1>
-                                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Ducimus quae facere tempora eius qui! Reiciendis inventore necessitatibus aut expedita incidunt!</p>
+                                <h1 className='font-medium text-xl'>{user?.fullname}</h1>
+                                <p>{user?.profile?.bio}</p>
                           
                           </div> 
                      </div> 
@@ -34,18 +38,18 @@ function Profile() {
              <div className='my-5'>
                   <div className='flex items-center gap-3 my-2'>
                         <Mail/>
-                        <span>abc@gmail.com</span>
+                        <span>{user?.email}</span>
                   </div>
                   <div className='flex items-center gap-3 my-2'>
                           <Contact/>
-                          <span>1234567891</span> 
+                          <span>{user?.phoneNumber}</span> 
                   </div> 
              </div>
              <div className='my-5'>
                   <h1>Skills</h1>
                   <div className='flex items-center gap-1'>
                         {
-                          skills.length !=0 ?skills.map((item,index)=><Badge key={index} className='bg-amber-950 text-white'>{item}</Badge>): <span>Not applicable</span>
+                          user?.profile?.skills.length !=0 ?user?.profile?.skills.map((item,index)=><Badge key={index} className='bg-amber-950 text-white'>{item}</Badge>): <span>Not applicable</span>
                         }
                   </div> 
              </div>
@@ -53,7 +57,7 @@ function Profile() {
               <div className='grid w-full max-w-sm items-center gap-1.5'>
                     <Label className="text-md font-bold">Resume</Label>
                     {
-                      isResume? <a target='blank' href='https:/youtube.com' className='text-blue-500 hover:underline cursor-pointer'> abc mern stack</a>:<span>NA</span>
+                      isResume? <a target='blank' href={user?.profile?.resume} className='text-blue-500 hover:underline cursor-pointer'>{user?.profile?.resumeOriginalName}</a>:<span>NA</span>
                     }
               </div>
               

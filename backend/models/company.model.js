@@ -6,7 +6,7 @@ const companySchema =new mongoose.Schema({
         required:true,
         unique:true
       },
-       desciption:{
+       description:{
         type:String 
       },
        website:{

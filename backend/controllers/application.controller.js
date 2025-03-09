@@ -27,12 +27,13 @@ export const applyJob =async (req,res)=>{
         }); 
       } 
 
-      const newApplication= await Application.create({
-          job:job,
-          applicant:userId
+      const newApplication = await Application.create({
+        job: jobId,
+        applicant: userId
       });
-      job.applications.push(newApplication.__id);
-      await job.save();
+ 
+    job.applications.push(newApplication._id);
+    await job.save(); 
 
       return res.status(201).json({
         message:"job applied succefully.",

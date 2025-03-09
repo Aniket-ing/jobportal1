@@ -1,6 +1,8 @@
  import {User} from "../models/user.model.js";
  import bcrypt from "bcryptjs";
  import jwt from "jsonwebtoken";
+import getDataUri from "../utils/datauri.js";
+import cloudinary from "../utils/cloudinary.js";
 
  export const register =async(req,res)=>{
     try {
@@ -11,7 +13,12 @@
                 success:false
             });
         }
-
+        const file =req.file; 
+        let cloudResponse;
+        if(file){
+            const fileUri =getDataUri(file);
+             cloudResponse =await cloudinary.uploader.upload(fileUri.content);
+        } 
         const user =await User.findOne({email});
         if(user){
             return res.status(400).json({
@@ -28,6 +35,9 @@
             phoneNumber,
             password:hashedPassword,
             role, 
+            profile:{
+                profilePhoto:file?cloudResponse.secure_url:"", 
+            }
         })
 
         return res.status(201).json({
@@ -108,12 +118,17 @@
  export const updateProfile =async(req,res) =>{
         try {
             const {fullname,email,phoneNumber,bio,skills}=req.body;
-            const file =req.file;
-
-             
+            let t=0;
+            const file =req.file; 
+            let cloudResponse=0;
+            if(file){
+                const fileUri =getDataUri(file);
+                cloudResponse =await cloudinary.uploader.upload(fileUri.content); 
+            } 
+            if(file)t=1; 
             const userId =req.id;  // middleware authentication
             let user =await User.findById(userId);
-
+            
             if(!user){
                 return  res.status(400).json({
                     message:"user not found",
@@ -130,7 +145,10 @@
                 skillsArray = skills.split(","); 
                 user.profile.skills =skillsArray;
             }
-            
+            if(cloudResponse && t){
+                user.profile.resume=cloudResponse.secure_url; // save the cloudinary url
+                user.profile.resumeOriginalName=file.originalname; //save the original name
+            }
 
             await user.save();
             user={ 
